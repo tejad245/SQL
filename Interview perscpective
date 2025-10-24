@@ -2,3 +2,10 @@ Why should you avoid SELECT * in production code?
 Increased IO of data , memroy overhead iin application reading all data , Increased network traffic in reading alldatae
 What is the impact of missing indexes? always includes indexes else below issues may occour 
 Slow queries as it searche entire table,Locking and concurrency issues when reading whole data takes time other request need to wait, join queries are slow
+
+How would you optimize slow-running queries?
+Using indexes effectively: You can create indexes on columns used frequently in the WHERE, JOIN, and ORDER BY clauses. However, note that creating too many indexes can slow down inserts, updates, and deletions.
+Avoid select * statement , retirve only column which are required
+Avoid using subqueries: Subqueries slow down query performance, especially when you use them in the WHERE or HAVING clauses. You should avoid using subqueries where possible and use JOINs 
+Utilize stored procedures: Stored procedures are precompiled SQL statements stored in a database, and can be called from an application or directly from a query. 
+Using stored procedures can improve your query performance by reducing the amount of data that is sent between the database and your application, and also saves time required to compile the SQL statements.
