@@ -1,0 +1,4 @@
+Why should you avoid SELECT * in production code? 
+Increased IO of data , memroy overhead iin application reading all data , Increased network traffic in reading alldatae
+What is the impact of missing indexes? always includes indexes else below issues may occour 
+Slow queries as it searche entire table,Locking and concurrency issues when reading whole data takes time other request need to wait, join queries are slow
