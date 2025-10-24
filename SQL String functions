@@ -1,0 +1,90 @@
+select upper(fname) as employee_name from employee;
+select lower(lname) as employee_name from employee;
+
+select distinct concat(fname,' ',lname) from employee;
+--to select distince either of below
+select distinct fname from employee;
+select fname from employee group by fname;
+
+select substring(fname,1,3) from employee; //return first chars of fname , here 1 start from index 1 and 3 is number of characters u want 3 here(3 here is not index its no of chars u want from startindex u specified)
+select substring(fname,0,3) from employee; //returns empty as 0  start //MySQL’s SUBSTRING() function is 1-indexed, not 0-indexed.
+select substring(fname,1) from employee; //returns full fname
+
+INSTR() to search the first occourence of the specified character
+select INSTR(LOWER(fname),'e') from employee where fname="Teja";
+select INSTR(LOWER(fname),'pa') from employee where fname="deepak";
+
+insert into employee values(3,"Teja","cse",28,'1998-04-18',203);
+--distinct fname and its length
+select distinct fname , length(fname) from employee;
+select fname, length(fname) from employee group by fname;
+
+//inserts the new column seniority based on the age field into existing table
+select fname , 
+		case 
+        when age<=27 then 'junior'
+        when age between 28 and 29 then 'mid-level'
+        else 'senior'
+        end as seniority
+        from employee;
+        
+select fname , dob, datediff(curdate(),dob) as number_of_days from employee;//datediff functio for differnc in date and curdate() gets  the current date
+
+select replace(fname, 'a' , 'AAA') from employee
+//capitalize the first letter of word
+select concat(upper(substring(fname,1,1)),lower(substring(fname,2))) as fname from employee
+
+select * from employee order by fname, age desc //order by fname is ordered by ascending and later age in descending
+
+select * from employee where fname like '%a'; //fetch employee whose fname ends with a
+
+select * from employee where fname like '____a' //fetch employee fname is ending with a and has five letters
+
+select fname, count(fname) from employee  
+group by fname
+order by count(fname) desc  //no. of employee by fname in dscending order.
+
+//to fetch only odd rows from employee table
+select * from employee where id%2!=0
+
+//nth (say n=5) highest GPA from a table.
+SELECT * 
+FROM Student 
+ORDER BY GPA DESC 
+LIMIT 4, 1;
+This is MySQL syntax for pagination: LIMIT offset, row_count.
+4 → offset (skip the first 4 rows). 1 → number of rows to return.
+
+//select employees with same age 
+select e1.* from employee e1 , employee e2 where e1.age=e2.age and e1.id!=e2.id
+
+//second highst age usigng subquery , subquery fetches highest query and main query excludes the highest one to get second
+select max(age) from employee 
+where age not in (select max(age) from employee)
+//query to hget half records
+set @half_count= (select floor(count(*)/2) from employee);
+select @half_count as hf
+select * from employee 
+limit @half_count;
+//query to get the last record in table (based on empid here)
+select * from employee
+where id=(select max(id) from employee)
+
+select curdate()  //to get current date
+select now()      //to get current date and time
+//second highst age
+select distinct age from employee
+order by age desc
+limit 1 offset 1
+
+//primary key cannot be null
+What is the difference between COUNT(*) and COUNT(column_name)?
+The difference is that COUNT(*) counts all the rows of data, including NULL values, while COUNT(column_name) counts only non-NULL values in the specified column. 
+
+SELECT
+  id,
+  sale_date,
+  amount,
+  SUM(amount) OVER (ORDER BY sale_date) AS running_total
+FROM
+  sales;
