@@ -1,7 +1,40 @@
-What is the impact of missing indexes?  
-Missing indexes can affect the performance of queries, especially when the data grows. The major impacts of missing indexes are listed below:
+# Impact of Missing Indexes
 
-1.Slow queries: Without indexes, every read query will go through the whole table to find matching rows. This will get worse as the data in the table grows.
-2.Locking and concurrency issues: Scanning a table without indexes takes longer, and locking the table can prevent other queries from running, affecting application performance.
-3.Inefficient joins: Joins on tables without indexes on the join keys are extremely slow and result in bad query performance.
-4.Poor user experience: Missing indexes can lead to poor user experience in your applications. It can result to slower page loads, application hanging when data is being fetched from the database.
+A concise guide that explains the impact of missing indexes, how to detect them, and practical remediation steps. Designed to display well on GitHub (README / docs).
+
+---
+
+## Summary (Short answer)
+- Missing indexes force full table scans, increasing latency, I/O, CPU, and memory usage.
+- They increase lock durations and contention, slow joins, and can lead to replication lag, timeouts, and outages.
+- As table size grows, these costs grow—often non-linearly.
+
+---
+
+## Why this happens (what the database does)
+- Full table scans: Without an index, the engine inspects every row for WHERE, JOIN, ORDER BY, or GROUP BY conditions.
+- More I/O and CPU: Scans read many more pages from disk and evict cached pages.
+- Longer locks / contention: Long scans hold locks or consume worker threads longer, increasing blocking.
+- Poor join strategies: Missing join-key indexes can force nested-loop scans or expensive hash joins.
+- Higher memory/temp usage: Sorting or grouping without usable indexes may spill to disk.
+- Cascading effects: Slow queries cause connection pileups, increased queueing, and replication lag.
+
+---
+
+## Concrete symptoms to watch for
+- Long or growing latencies for specific statements.
+- High logical reads / page reads in query plans.
+- Sequential scans (seq scan / Table Scan) reported by EXPLAIN / EXPLAIN ANALYZE.
+- High rows_examined (MySQL) or similar metrics.
+- Lock waits and blocking sessions tied to long-running reads.
+- Slow JOINs where join keys lack indexes.
+- Replication lag or timeouts during peak loads.
+
+---
+
+## How to detect missing or inefficient indexes
+- Use EXPLAIN / EXPLAIN ANALYZE (Postgres), EXPLAIN (MySQL), or Query Plan (SQL Server).
+- Postgres: check `pg_stat_user_tables` (seq_scan) and `pg_stat_statements`.
+- SQL Server: inspect `sys.dm_db_missing_index*` DMVs.
+- MySQL: use the slow query log and `EXPLAIN` to inspect `rows_examined`.
+-
