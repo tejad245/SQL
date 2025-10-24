@@ -1,0 +1,95 @@
+Window Function
+A window function is a function that allows you to perform operations on a specific set of rows related to the current row. Unlike aggregate functions that perform calculations on an entire data set,
+window functions can perform operations on a subset of data. These calculations are valid for aggregates, ranking, and cumulative totals without altering the original dataset.
+
+refer window functions setion this page for some crity - https://roadmap.sh/questions/sql-queries
+
+running total
+SELECT
+  id,
+  sale_date,
+  amount,
+  SUM(amount) OVER (ORDER BY sale_date) AS running_total
+FROM
+  sales;
+
+Rank()
+The RANK() function assigns each row a rank according to an ascending or descending order. If there are matching values,
+it assigns them the same position and then skips the next number for the next rank. For example, if two rows have equivalent values and are both assigned rank 1, the next rank would be 3 instead of 2.
+SELECT
+  id,
+  day,
+  amount,
+  RANK() OVER (ORDER BY amount DESC) AS amount_rank
+FROM
+  sales;
+
+dense_rank()
+DENSE_RANK() function is similar to RANK() in that it assigns ranks to rows, but the difference is that DENSE_RANK does not leave a gap when there are two or more equivalent values.
+Let's illustrate it with the Sales table from above. The query is shown below.
+SELECT
+  id,
+  day,
+  amount,
+  DENSE_RANK() OVER (ORDER BY amount DESC) AS amount_rank
+FROM
+  sales;
+
+
+row()
+ROW_NUMBER assigns a unique number to each row depending on the order you specify. It does not skip numbers; even though there are equivalent values,
+it assigns them different numbers, unlike RANK and DENSE_RANK functions that give them the same rank.
+SELECT
+  id,
+  day,
+  amount,
+  ROW_NUMBER() OVER (ORDER BY amount DESC) AS rowNumber
+FROM
+  sales;
+
+What is LAG() and LEAD() in SQL? 
+LAG() and LEAD() are window functions used to retrieve data from rows before and after a specified row. You can also refer to them as positional SQL functions.
+
+LAG() allows you to access a value stored in rows before the current row. The row may be directly before or some rows before. Let's take a look at the syntax:
+
+LAG(column_name, offset, default_value)
+It takes three arguments.
+column_name: This specifies the column to fetch from the previous row.
+offset: This is an optional argument and specifies the number of rows behind to look at. The default is 1.
+default_value: This is the value to assign when no previous row exists. It is optional, and the default is NULL.
+
+SELECT
+  id,
+  day,
+  amount,
+  LAG(amount) OVER (ORDER BY id) AS previous_day_sales
+FROM
+  sales;
+
+You use the LEAD() function to get data from rows after the current row. Its syntax is similar to that of the LAG() function. You can use it for forecasting future trends by looking ahead.
+
+SELECT
+  id,
+  day,
+  amount,
+  LEAD(amount) OVER (ORDER BY id) AS previous_day_sales
+FROM
+  sales;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
