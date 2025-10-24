@@ -1,0 +1,8 @@
+ALTER TABLE table_name
+ADD column_name datatype;
+
+ALTER TABLE table_name
+RENAME COLUMN old_column_name TO new_column_name;
+
+AlLTER TABLE table_name
+DEOP COLUMN column_name
