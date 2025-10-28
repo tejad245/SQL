@@ -18,6 +18,7 @@ If you use a UNIQUE constraint, SQL might technically allow a NULL, but such a c
 3. Primary Key : Primary Key is a set of attributes that can uniquely identify a table. A single table can have only one primary key. Out of all the chosen candidate keys, one of the keys is selected as the primary key.
 Example:
 PatientID, MedInsuranceNo, AadharNo are chosen as the candidate keys from the Patients table. Either of them can be chosen as a Primary key.
+When you specify a primary key constraint for a table, the Database Engine enforces data uniqueness by automatically creating a unique index for the primary key columns. 
 Rules for Primary Key
 Unique values must be present in all columns, chosen as primary key
 A single table can have only one primary key
@@ -116,3 +117,67 @@ CREATE TABLE sub_accounts (
    FOREIGN KEY (ref_num, ref_type) REFERENCES accounts
       (acc_num, acc_type));
 
+
+Cascadeing : By using ON DELETE CASCADE or ON UPDATE CASCADE, we can ensure referential integrity, maintain consistent relationships, and reduce the complexity of manual database management tasks.
+CREATE TABLE Authors (
+    AuthorID INT PRIMARY KEY,
+    AuthorName VARCHAR(200)
+);
+CREATE TABLE Books (
+    BookID INT PRIMARY KEY,
+    Title VARCHAR(255),
+    AuthorID INT,
+    FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+1. ON DELETE CASCADE : ON DELETE CASCADE ensures that when a record in the parent table is deleted, the corresponding records in the child table automatically get deleted.
+Example: In the below given query we are deleting a record from the author's table where authored is 2. The books associated with authored 2 will automatically get deleted.
+
+2. ON UPDATE CSCADE : We will use this type of cascade when a primary key in the parent table is updated. In such cases, the corresponding foreign key values in the child table are automatically updated.
+Example : In the query below, we are updating AuthorID = 1 to AuthorID = 2. As a result, all rows where AuthorID = 1 will be updated to AuthorID = 2.
+
+3. ON INSERT CASCADE : First, we will create two tables, i.e., item and stock. The first table item will be the parent table, and the second table stock will be the child table.
+Whenever we make an entry in the item table, the stock table gets updated automatically by entering new data.
+Now, whenever a new product is launched, we need to insert the product name into the item table and set that item's quantity to zero in the stocks table. 
+Manually this can be done by executing two queries, but using the ON INSERT CASCADE technique, this can be done within a single query.
+
+ex: 
+Create trigger t1 after insert on items for each row
+begin
+insert into stocks (id, quantity) values (NEW.id,0);
+end
+dept with dept_id pimarykey , emp table with empid(primary key) , dept_id foreign key referneces dept table
+ex : trigger on child table
+CREATE TRIGGER employee_delete_audit
+AFTER DELETE ON Employee
+FOR EACH ROW
+BEGIN
+  INSERT INTO AuditLog (action, emp_id)
+  VALUES ('Deleted due to cascade', OLD.emp_id);
+END;
+
+
+ex: trigger on parent table
+CREATE TRIGGER dept_delete_audit
+BEFORE DELETE ON Department
+FOR EACH ROW
+BEGIN
+  INSERT INTO AuditLog (action, dept_id)
+  VALUES ('Parent department deleted', OLD.dept_id);
+END;
+
+
+Importance of Backups
+Before implementing cascading actions, it is crucial to back up your database. This precaution prevents data loss in case the cascading actions produce unexpected results.
+While CASCADE UPDATE is useful, it’s crucial to monitor its effects on data integrity. If not managed carefully, it can lead to unintended consequences.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. OLD — refers to existing (before-change) data
+Used in DELETE and UPDATE triggers. ->Represents the row as it was before the change.
+Example:OLD.id
+means → “the value of the column id in the row that was just deleted or updated.”
+
+2. NEW — refers to new (after-change) data
+Used in INSERT and UPDATE triggers Represents the row as it will be (after insert/update).
+Example:NEW.id
+means → “the new value of the id column being inserted or updated.”
