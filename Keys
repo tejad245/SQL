@@ -1,0 +1,118 @@
+Keys -> for uniquely identifying records , establish relation ship b/w tables , for proper data organisation , to avoid data duplication
+Types of keys below  :
+1. Super Key: Super Key is a set of attributes that can uniquely identify a table. A single table can have multiple super keys. 
+A candidate key, primary key and a unique key can be a super key, but the reverse does not hold true.
+ex: patient table have -> patientId , medicalInsuranceNo , aadharNo
+These can be super keys and patientId , medicalInsuranceNo , aadharNo , {patientId,medicalInsuranceNo,aadharNo} , {patientId , medicalInsuranceNo} ,{medicalInsuranceNo,aadharNo},{patientId,aadharNo}-> all 7 can be super keys
+
+2. Candidate Key:Candidate Key is a set of attributes that can uniquely identify a table. A single table can have multiple candidate keys. Out of all the chosen candidate keys, one of the keys is selected as the primary key.
+Example:
+PatientID, MedInsuranceNo, AadharNo can be chosen as the candidate keys from the Patients table.
+Rules for Candidate Key
+Unique values must be present in all columns, chosen as candidate key
+A single table can have multiple candidate keys
+Null values cannot be present in the column chosen as candidate key
+A candidate key cannot contain NULL values — by definition.
+If you use a UNIQUE constraint, SQL might technically allow a NULL, but such a column should not be considered a true candidate key in database design.
+
+3. Primary Key : Primary Key is a set of attributes that can uniquely identify a table. A single table can have only one primary key. Out of all the chosen candidate keys, one of the keys is selected as the primary key.
+Example:
+PatientID, MedInsuranceNo, AadharNo are chosen as the candidate keys from the Patients table. Either of them can be chosen as a Primary key.
+Rules for Primary Key
+Unique values must be present in all columns, chosen as primary key
+A single table can have only one primary key
+No NULL value must be present in the column chosen as primary key
+A new row cannot be inserted with an existing primary key
+Apply Primary Key on multiple columns
+[code]
+CREATE TABLE Patients (
+PatientID INT,
+PatientName VARCHAR(255),
+Sex VARCHAR(255),
+Age VARCHAR(255),
+MedInsuranceNo VARCHAR(255),
+AadharNo INT,
+CONSTRAINT PK_Patient PRIMARY KEY (PatientID, MedInsuranceNo)
+);
+
+–Multiple COLUMNS
+ALTER TABLE Patients
+ADD CONSTRAINT PK_Patient PRIMARY KEY (PatientID, MedInsuranceNo, AadharNo);
+
+4. Alternate Key: As the name suggests, all the candidate keys which are not selected as primary keys are known as the Alternate Key.
+Example: If the PatientID is selected as the Primary Key, then the MedInsuranceNo and the AadharNo are known as the alternate keys. alternate key is unique and not null 
+
+5. Unique Key : The Unique key is quite similar to primary keys in a database. The only difference is that the unique keys allow a single NULL value in the column and must not have any duplicate values. 
+ALTER TABLE Patients
+ADD CONSTRAINT UK_Patient UNIQUE (PatientID, MedInsuranceNo, AadharNo);
+
+6 . Foreign Key: Primary Key is a set of attributes that can take values referenced to the values of another table. 
+Example: PatientID in the CheckupDetails table is referred to the PatientID in the Patients table
+Rules for Foreign Key
+Relationship between both the tables is known as referential integrity.
+Referential integrity: the referenced value must exist in the parent table
+A single table can have multiple foreign keys ,A foreign key can have NULL values.
+You can duplicate foreign keys
+The table consisting of the foreign key is known as the CHILD table and the table that is referred by the foreign key is called the parent table.
+Yes, a foreign key column can have NULL values — unless you explicitly define it as NOT NULL.
+🔹 Why?
+A foreign key represents a relationship between two tables —
+it points to a primary key (or candidate key) in another table.
+But sometimes, the relationship is optional.
+If the relationship doesn’t apply to a particular row, we can store NULL in the foreign key column.
+INSERT INTO Department VALUES (1, 'HR');
+-- Works fine (linked to department)
+INSERT INTO Employee VALUES (101, 'Teja', 1);  ✅
+-- Works fine (no department assigned)
+INSERT INTO Employee VALUES (102, 'Ravi', NULL); ✅
+-- Fails (no such dept_id in parent)
+INSERT INTO Employee VALUES (103, 'Kiran', 5); ❌
+Yes, a foreign key column can have duplicate values —
+as long as those values exist in the referenced (parent) table.
+
+🔹 Why duplicates are allowed
+A foreign key defines a relationship, not uniqueness.
+It ensures referential integrity — meaning every non-null value must match a valid primary key (or unique key) in the parent table.
+But multiple child rows can reference the same parent — that’s the whole point of one-to-many relationships.
+rule for duplicate foreign key
+CREATE TABLE CheckupDetails (
+PatientID INT NOT NULL,
+AnnualCheckUpMonth VARCHAR(255),
+Price INT,
+PRIMARY KEY (PatientID),
+FOREIGN KEY (PatientID) REFERENCES Patients(PatientID) 
+);
+
+7. Composite Key :As the  name suggests a composite key is a combination of multiple columns that can uniquely identify tuples.A primary key composed of two or more columns used together to uniquely identify a row is composite key
+Example: PaitentID and AnnualCheckupMonth can be considered together as a composite key.
+None of the columns involved in a composite key can be NULL.
+The composite key helps in tables where single columns cannot guarantee uniqueness, but a combination of columns can.
+Yes, a primary key can be a composite key — it just means the table’s unique identifier consists of multiple columns combined.
+Apply Composite Key on multiple columns
+[code]
+CREATE TABLE Patients (
+PatientID INT,
+PatientName VARCHAR(255),
+Sex VARCHAR(255),
+Age VARCHAR(255),
+MedInsuranceNo VARCHAR(255),
+AadharNo INT,
+PRIMARY KEY (PatientID, MedInsuranceNo)
+);
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Composite key as primary key and foreign key 
+CREATE TABLE accounts (
+   acc_num INTEGER,
+   acc_type INTEGER,
+   acc_descr CHAR(20),
+   PRIMARY KEY (acc_num, acc_type));
+
+CREATE TABLE sub_accounts (
+   sub_acc INTEGER PRIMARY KEY,
+   ref_num INTEGER NOT NULL,
+   ref_type INTEGER NOT NULL,
+   sub_descr CHAR(20),
+   FOREIGN KEY (ref_num, ref_type) REFERENCES accounts
+      (acc_num, acc_type));
+
