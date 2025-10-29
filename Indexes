@@ -1,0 +1,61 @@
+Indexes : Indexing makes columns faster to query by creating pointers to where data is stored within a database.Imagine you want to find a piece of information that is within a large database. 
+To get this information out of the database the computer will look through every row until it finds it. If the data you are looking for is towards the very end, this query would take a long time to run.
+
+An index is a distinct structure in the database that is built using the create index statement. It requires its own disk space and holds a copy of the indexed table data.
+it creates a new data structure that refers to the table. A database index is, after all, very much like the index at the end of a book: it occupies its own space,
+
+There are two types of databases indexes:
+1. Clustered
+2. Non-clustered
+Both clustered and non-clustered indexes are stored and searched as B-trees, a data structure similar to a binary tree
+. A B-tree is a “self-balancing tree data structure that maintains sorted data and allows searches, sequential access, insertions, and deletions in logarithmic time.” 
+Basically it creates a tree-like structure that sorts data for quick searching.
+
+Clustered Indexes : Clustered indexes are the unique index per table that uses the primary key to organize the data that is within the table. 
+The clustered index ensures that the primary key is stored in increasing order, which is also the order the table holds in memory.
+Clustered indexes do not have to be explicitly declared.
+Created when the table is created ,Uses the primary key sorted in ascending order.
+#Creating clustered Indexes
+The clustered index will be automatically created when the primary key is defined:
+CREATE TABLE friends (id INT PRIMARY KEY, name VARCHAR, city VARCHAR);
+
+ Since the numbers are ordered, the search can navigate the B-tree allowing searches to happen in logarithmic time.
+However, in order to search for the “name” or “city” in the table, we would have to look at every entry because these columns do not have an index. This is where non-clustered indexes become very useful.
+
+Non-clustered Indexes
+Non-clustered indexes are sorted references for a specific field, from the main table, that hold pointers back to the original entries of the table. 
+Note: Non-clustered indexes are not new tables. Non-clustered indexes hold the field that they are responsible for sorting and a pointer from each of those entries back to the full entry in the table.
+Non-clustered indexes point to memory addresses instead of storing data themselves. This makes them slower to query than clustered indexes but typically much faster than a non-indexed column.
+
+To create an index to sort our friends’ names alphabetically:
+CREATE INDEX friends_name_asc ON friends(name ASC);
+
+Indexes use an optimal search method known as binary search. Binary searches work by constantly cutting the data in half and checking if the entry you are searching for comes before or after the entry in the middle of the current portion of data. 
+This works well with B-trees because they are designed to start at the middle entry;
+to search for the entries within the tree you know the entries down the left path will be smaller or before the current entry and the entries to the right will be larger or after the current entry. 
+refer this : https://www.youtube.com/watch?v=rtmeNwn4mEg
+
+When not to use Indexes : 
+When data is written to the database, the original table (the clustered index) is updated first and then all of the indexes off of that table are updated. 
+Every time a write is made to the database, the indexes are unusable until they have updated. If the database is constantly receiving writes then the indexes will never be usable. 
+This is why indexes are typically applied to databases in data warehouses that get new data updated on a scheduled basis(off-peak hours) and not production databases which might be receiving new writes all the time.
+
+Trade-offs:
+While indexes significantly improve query performance, they come with some trade-offs:
+Storage Overhead: Indexes require additional disk space, especially for large tables with multiple indexes.
+Maintenance Overhead: Indexes need to be updated whenever data is inserted, updated, or deleted. This can slow down write operations (INSERT, UPDATE, DELETE).
+
+Unique Indexes
+A unique index ensures that all values in a column (or combination of columns) are unique preventing duplicates and maintaining data integrity.
+Syntax: CREATE UNIQUE INDEX index_name ON table_name (column_name);
+Example:
+CREATE UNIQUE INDEX idx_unique_employee_id ON Sales (customer_id);
+Explanation: This ensures no two rows in the Sales table can have same customer_id.
+If we try inserting a duplicate , It will throw an error 
+
+Performance Improvement: Indexes significantly speed up data retrieval, especially for large tables and frequently queried columns.
+Storage Overhead: Indexes require additional storage space.
+Update Performance: Updates, inserts, and deletes on indexed tables can be slower because the index also needs to be maintained.
+Appropriate Use: Indexes are most effective on columns frequently used in WHERE clauses, JOIN conditions, and ORDER BY clauses. They are generally not recommended for small tables or columns with a high number of NULL values.
+
+
