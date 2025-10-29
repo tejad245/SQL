@@ -1,0 +1,26 @@
+Procedure: A stored procedure is a precompiled collection of one or more SQL statements stored in the database. In practice, these SQL statements can be executed multiple times.
+One unique characteristic of a stored procedure is that it can accept parameters, perform complex operations, and return results. 
+Stored procedures are used to encapsulate business logic, automate repetitive tasks, and enhance performance. Therefore, they reduce the need for multiple round trips between the application and the database.
+Syntax:
+CREATE OR REPLACE PROCEDURE procedure_name
+(@parameter1 data_type, @parameter2 data_type, ...)
+AS
+BEGIN
+   -- SQL statements to be executed
+END
+
+Execute the stored procedure above as follows:
+Example : EXEC SelectAllCustomers;
+
+User-Defined Stored Procedure: this stored procedure is created by users to encapsulate business logic
+System Stored Procedure: it’s provided by the database system for administrative tasks, such as database management, troubleshooting, or system configuration.
+Examples include: sp_help for viewing database object information , sp_rename for renaming database objects.
+Extended Stored Procedure: it allows external programs to interact with the database system
+
+Feature	                     |            Stored Procedures                                |	                      Views
+Purpose	                          It encapsulates business logic and automates tasks	          It simplifies queries and enhances security
+Data Storage	                    It can use temporary storage (e.g., variables)	              It doesn’t store data physically
+Parameters	                      Can accept parameters                                         Can’t accept parameters
+Complexity	                      Can perform complex operations	                              Typically used for simpler operations and focuses on data presentation
+Performance	                      It enhances performance for complex tasks	                    It enhances query simplicity
+Data Modification	                Can perform data modification operations	                    Can be updatable or read-only
