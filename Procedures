@@ -1,6 +1,9 @@
 Procedure: A stored procedure is a precompiled collection of one or more SQL statements stored in the database. In practice, these SQL statements can be executed multiple times.
 One unique characteristic of a stored procedure is that it can accept parameters, perform complex operations, and return results. 
 Stored procedures are used to encapsulate business logic, automate repetitive tasks, and enhance performance. Therefore, they reduce the need for multiple round trips between the application and the database.
+
+Reduced Network Traffic: Instead of sending multiple individual queries to the database server, stored procedures allow you to execute multiple operations in one go, reducing network load.
+
 Syntax:
 CREATE OR REPLACE PROCEDURE procedure_name
 (@parameter1 data_type, @parameter2 data_type, ...)
@@ -16,6 +19,68 @@ User-Defined Stored Procedure: this stored procedure is created by users to enca
 System Stored Procedure: it’s provided by the database system for administrative tasks, such as database management, troubleshooting, or system configuration.
 Examples include: sp_help for viewing database object information , sp_rename for renaming database objects.
 Extended Stored Procedure: it allows external programs to interact with the database system
+
+-- Create a stored procedure named "GetCustomersByCountry"
+CREATE PROCEDURE GetCustomersByCountry
+    @Country VARCHAR(50)
+AS
+BEGIN
+    SELECT CustomerName, ContactName
+    FROM Customers
+    WHERE Country = @Country;
+END;
+
+-- Execute the stored procedure with parameter "Sri lanka"
+EXEC GetCustomersByCountry @Country = 'Sri lanka';
+
+Real-World Use Cases for SQL Stored Procedures
+Order Processing System In an e-commerce application, a stored procedure can automate the process of inserting new orders, updating stock levels, and generating invoices.
+Employee Management System A stored procedure can be used to calculate salaries for employees, deduct taxes, and generate monthly salary slips.
+Data Validation Use stored procedures to validate data before it’s inserted into the database. For example, checking if an email address already exists before adding a new user.
+Audit Logs Create a stored procedure that automatically logs changes to sensitive data, such as changes to user roles or permissions, for security and auditing purposes.
+
+Output parameters, defined by the OUTPUT keyword, allow a stored procedure to send a value back to the calling environment. 
+-- Create a procedure to calculate the discounted price
+CREATE PROCEDURE CalculateDiscount 
+    @Price DECIMAL(10, 2), 
+    @DiscountRate DECIMAL(5, 2),  
+    @FinalPrice DECIMAL(10, 2) OUTPUT -- Output: final price after discount
+AS
+BEGIN
+    -- Calculate final price by applying the discount rate to the original price
+    SET @FinalPrice = @Price * (1 - @DiscountRate);
+END;
+
+To call this procedure, you would use;
+-- Declare a variable to store the final price after discount
+DECLARE @FinalPrice DECIMAL(10, 2);
+-- Execute the CalculateDiscount procedure with a price of 100 and a 10% discount 
+-- Store the output in the @FinalPrice variable
+EXEC CalculateDiscount @Price = 100, @DiscountRate = 0.1, @FinalPrice = @FinalPrice OUTPUT;
+-- Select and display the final discounted price
+SELECT @FinalPrice AS FinalPrice;
+
+Transaction management
+By using stored procedures, you can ensure multiple operations are executed as a single transaction. For example, in a banking system, a stored procedure can handle both debit and credit actions in a funds transfer, making sure both actions succeed or fail together.
+
+-- Create a procedure to transfer funds between accounts
+CREATE PROCEDURE TransferFunds
+    @SenderAccount INT,
+    @ReceiverAccount INT,
+    @Amount DECIMAL(10, 2)
+AS
+BEGIN
+    BEGIN TRANSACTION;  -- Start a transaction to ensure atomicity
+    -- Deduct the specified amount from the sender's account balance
+    UPDATE Accounts SET Balance = Balance - @Amount WHERE AccountID = @SenderAccount;
+    -- Add the specified amount to the receiver's account balance
+    UPDATE Accounts SET Balance = Balance + @Amount WHERE AccountID = @ReceiverAccount;
+    -- Check for errors and rollback if any occurred; otherwise, commit the transaction
+    IF @@ERROR <> 0
+        ROLLBACK TRANSACTION;  -- Undo all changes if an error occurred
+    ELSE
+        COMMIT TRANSACTION;    -- Confirm changes if no errors
+END;
 
 Feature	                     |            Stored Procedures                                |	                      Views
 Purpose	                          It encapsulates business logic and automates tasks	          It simplifies queries and enhances security
