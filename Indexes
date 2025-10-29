@@ -26,7 +26,7 @@ Non-clustered Indexes
 Non-clustered indexes are sorted references for a specific field, from the main table, that hold pointers back to the original entries of the table. 
 Note: Non-clustered indexes are not new tables. Non-clustered indexes hold the field that they are responsible for sorting and a pointer from each of those entries back to the full entry in the table.
 Non-clustered indexes point to memory addresses instead of storing data themselves. This makes them slower to query than clustered indexes but typically much faster than a non-indexed column.
-
+geeral syntax: create index ix_tablename_field on tablename(field asc/desc)
 To create an index to sort our friends’ names alphabetically:
 CREATE INDEX friends_name_asc ON friends(name ASC);
 
