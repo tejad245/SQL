@@ -1,0 +1,46 @@
+Views : A view is a virtual table based on the result-set of an SQL statement.
+It contains rows and columns, just like a real table, but unlike a table, a view does not store data itself. Instead, it dynamically retrieves data from one or more tables as and when queried.
+
+1. Simplified Querying : Views can encapsulate complex joins, filters, and calculations, providing a simplified interface for users. Instead of writing intricate SQL queries,users can interact with a view that presents the data in a straightforward manner.
+
+2. Data Security: Views can restrict access to specific rows and columns of a table. By granting users access to a view instead of the underlying tables, you can control which data they can see and modify.
+
+3. Data Abstraction : Views provide a level of abstraction over the physical data storage. This abstraction allows changes in the underlying table structure without affecting the users’ interactions with the data through views.
+
+Three Types of views:
+1.Simple views:Simple views are formed from a single table and do not contain any group functions or complex calculations.
+CREATE VIEW simple_view AS
+SELECT column1, column2
+FROM table_name
+WHERE condition;
+2.Complex views: Complex views involve multiple tables, joins, and aggregation functions. They handle more sophisticated SQL logic.
+CREATE VIEW complex_view AS
+SELECT a.column1, b.column2, SUM(a.column3)
+FROM table1 a
+JOIN table2 b ON a.id = b.id
+GROUP BY a.column1, b.column2;
+3. Materialized views: Materialized views store the result set of a query physically, unlike standard views. They are useful for improving query performance on complex and resource-intensive operations.
+However, materialized views require maintenance to keep them updated with changes in the underlying data.
+CREATE MATERIALIZED VIEW materialized_view_name AS
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;
+
+Updating a View : You can use the CREATE OR REPLACE VIEW statement to update or modify an existing view. This statement allows you to redefine the view without dropping it first.
+CREATE OR REPLACE VIEW view_name AS
+SELECT column1, column2, column3
+FROM table_name
+WHERE condition;
+
+Dropping a View : You can remove a view from the database using the DROP VIEW statement.
+DROP VIEW view_name;
+
+Refreshing a Materialized View : Materialized views need to be refreshed periodically to update their content with the latest data from the underlying tables. You can do this by using the REFRESH MATERIALIZED VIEW statement.
+REFRESH MATERIALIZED VIEW materialized_view_name;
+
+Indexing Underlying Tables: Ensure that the underlying tables of a view are properly indexed. This can significantly enhance the performance of queries executed on the view.
+Views can be used as security mechanisms by letting users access data through the view, without granting users permissions to directly access the underlying tables of the query
+Views can be used to provide a backward compatible interface to emulate a table that used to exist but whose schema has changed.
+
+Views with conditions
+SELECT * FROM Vemployee_data WHERE gender = 'female'
