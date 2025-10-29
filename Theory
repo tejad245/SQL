@@ -13,6 +13,8 @@ Therefore, real-world considerations usually require a compromise between perfec
 Dirty reads: reading uncommitted data
 Non-repeatable reads: data changes between two reads
 Phantom reads: new rows appear during a transaction
+Each transaction should run as if it’s the only one running, even when many run simultaneously.
+👉 Example: If two users book the same seat at once, isolation ensures only one succeeds.
 4. Durability : Once a transaction is successfully committed, its effects are permanent. 
 Even in the face of system crashes or power failures, the changes made by committed transactions are retained, and the database is able to recover to a consistent state upon restarting.
 
