@@ -21,6 +21,7 @@ JOIN table2 b ON a.id = b.id
 GROUP BY a.column1, b.column2;
 3. Materialized views: Materialized views store the result set of a query physically, unlike standard views. They are useful for improving query performance on complex and resource-intensive operations.
 However, materialized views require maintenance to keep them updated with changes in the underlying data.
+querying a materialized view is generally faster than recomputing the same result every time a query is executed.
 CREATE MATERIALIZED VIEW materialized_view_name AS
 SELECT column1, column2, ...
 FROM table_name
@@ -44,3 +45,39 @@ Views can be used to provide a backward compatible interface to emulate a table 
 
 Views with conditions
 SELECT * FROM Vemployee_data WHERE gender = 'female'
+
+views can be used to update/delete/insert data in table under below conditions
+1. views dont have distince keyword
+2. views done have having , group by clause
+3. views dont have aggregate functions like max() , sum()
+3. views dont contain order , sortby
+it first updateds or deletes data in actual table and reflects in view
+update empview
+set name="vish"
+where id=2
+updates employee table first and then view empview
+
+With Check option:
+If we have used the WITH CHECK OPTION clause in the CREATE VIEW statement, and if the UPDATE or INSERT clause does not satisfy the conditions then they will return an error. 
+In the below example, we are creating a View SampleView from the StudentDetails Table with a WITH CHECK OPTION clause.
+Example:
+CREATE VIEW SampleView AS
+SELECT S_ID, NAME
+FROM  StudentDetails
+WHERE NAME IS NOT NULL
+WITH CHECK OPTION;
+In this view, if we now try to insert a new row with a null value in the NAME column then it will give an error because the view is created with the condition for the NAME column as NOT NULL. 
+For example, though the View is updatable then also the below query for this View is not valid:
+INSERT INTO SampleView(S_ID) VALUES(6);
+
+
+Creating views in stored procedure
+CREATE PROCEDURE CreateMarketersView
+AS
+BEGIN
+    EXEC('CREATE VIEW OR ALTER Marketers AS
+         SELECT *
+         FROM Employees
+         WHERE Department = ''Marketing''');
+END;
+it creates view named Marketers
