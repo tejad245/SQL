@@ -1,0 +1,66 @@
+1. Grant : SQL Grant command is specifically used to provide privileges to database objects for a user. This command also allows users to grant permissions to other users. 
+Syntax: 
+grant privilege_name on object_name
+to {user_name | public | role_name} 
+Here privilege_name is which permission has to be granted, object_name is the name of the database object, user_name is the user to which access should be provided, the public is used to permit access to all the users. 
+
+2. Revoke : Revoke command withdraw user privileges on database objects if any granted. It does operations opposite to the Grant command. When a privilege is revoked from a particular user U, then the privileges granted to all other users by user U will be revoked. 
+Syntax:
+revoke privilege_name on object_name
+from {user_name | public | role_name}
+if the user has received SELECT privileges on that table from more than one users,
+he/she can SELECT from that table until everyone who granted the permission revokes it. You cannot REVOKE privileges if they were not initially granted by you
+
+Privileges: Privileges defines the access rights provided to a user on a database object. There are two types of privileges.
+1) System privileges - This allows the user to CREATE, ALTER, or DROP database objects.
+2) Object privileges - This allows the user to EXECUTE, SELECT, INSERT, UPDATE, or DELETE data from database objects to which the privileges apply.
+
+Types of Privileges for GRANT AND REVOKE used are
+Privileges: The privileges that can be granted to the users are SELECT , INSERT , UPDATE , DELETE , INDEX , ALTER, CREATE , DROP , ALL , GRANT.
+
+Granting Privileges to Users
+To grant Select Privilege to a table named "users" where User Name is Amit, the following GRANT statement should be executed.
+The general syntax of specifying a username is: 'user_name'@'address'.
+If the user 'Amit' is on the local host then we have to mention it as 'Amit'@'localhost'. Or suppose if the 'Amit' username is on 192.168.1.100 IP address then we have to mention it as 'Amit'@'192.168.1.100'.
+'user_name'@'address' - When you're granting or revoking permissions in MySQL, you use the 'username' or 'hostname' format to tell which users are allowed or denied. This is important for keeping security and access control in place
+
+To grant the SELECT privilege on a table named "users" to a user named "Amit", use the following command:
+GRANT SELECT,CREATE ON Users TO 'Amit'@'localhost;'
+
+Granting All previlages
+GRANT ALL ON users TO amit@localhost
+
+GRANT UPDATE (EMPNO,DEPT) ON TABLE EMP TO NATZ;
+This statement grants UPDATE privileges on columns EMPNO and DEPT in the EMP table to user NATZ.
+
+GRANT ALL ON TABLE EMP TO KWAN,ALONZO WITH GRANT OPTION;
+This statement grants all privileges on the EMP table to users KWAN and ALONZO. The WITH GRANT OPTION clause allows these two users to grant the table privileges to others.
+You should use the WITH GRANT option carefully because for example if you GRANT SELECT privilege on employee table to user1 using the WITH GRANT option, then user1 can GRANT SELECT privilege on employee table to another user, such as user2 etc.
+Later, if you REVOKE the SELECT privilege on employee from user1, still user2 will have SELECT privilege on employee table.
+
+Granting Privileges to All Users
+To grant a specific privilege (e.g., SELECT) to all users on the "users" table, execute:
+in example the "*" symbol is used to grant select permission to all the users of the table "users".
+GRANT SELECT  ON Users TO '*'@'localhost';
+
+Granting Privileges on Functions/Procedures
+While using functions and procedures, the Grant statement can be used to grant users the ability to execute the functions and procedures in MySQL.
+syntax : GRANT EXECUTE ON [ FUNCTION | PROCEDURE]  object  TO 'amit'@'localhost'
+GRANT EXECUTE ON FUNCTION function_name TO 'Amit'@'localhost';
+GRANT EXECUTE ON PORCEDURE procedurename TO 'Amit'@'localhost';
+
+Checking the Privileges Granted to a User
+To see the privileges granted to a user in a table, the SHOW GRANTS statement is used. To check the privileges granted to a user named "Amit" and host as "localhost", the following SHOW GRANTS statement will be executed:
+SHOW GRANTS FOR  'Amit'@'localhost'; 
+
+Revoking All Privileges : To revoke all the privileges to a user named "Amit" in a table "users", the following revoke statement should be executed.
+REVOKE ALL ON Users FROM 'Amit'@'localhost'; 
+
+Revoking Privileges on Functions/Procedures : While using functions and procedures, the revoke statement can be used to revoke the privileges from users which have been EXECUTE privileges in the past.
+Syntax:
+REVOKE EXECUTE ON [ PROCEDURE | FUNCTION ] object FROM User; 
+
+Revoking EXECUTE Privileges to all Users on a Procedure in MySQL :If there is a procedure called "DBMSProcedure" and you want to revoke EXECUTE access to all the users, then the following revoke statement should be executed.
+REVOKE EXECUTE ON PROCEDURE DBMSProcedure FROM '*'@'localhost'; 
+
+
