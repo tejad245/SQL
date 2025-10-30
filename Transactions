@@ -1,0 +1,42 @@
+Transaction : A database transaction is a series of operations executed as a single, all-or-nothing unit of work. To be more precise, all the operations inside a transaction must be completed;
+otherwise, it will roll back to the previous state before the operations took place. In other words, this makes transactions very important in securing data integrity, consistency, and reliability.
+
+1. The START TRANSACTION statement can be used to start a transaction. This statement marks the beginning of the new transaction.
+START TRANSACTION;
+2. All the requisite operations in SQL have to then be conducted within the transaction. For example, you could do updates, insertions, or deletions of records.
+UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
+3. Committing a Transaction
+The COMMIT statement saves all the changes made during a transaction. It makes all of the changes permanent and terminates the transaction.
+COMMIT;
+4. Rolling Back a Transaction
+If something goes wrong and you want to "roll back" the changes made during the transaction, issue the ROLLBACK statement. This statement restores the database to its state before the transaction started.
+ROLLBACK
+
+Using Savepoints
+You can establish named intermediate points within a transaction by using savepoints. 
+The basic idea behind savepoints is to give a chance for partial transaction rollbacks, which means that parts of a transaction could be cancelled without interfering with the integrity of the whole transaction.
+
+--> Start Transaction
+START TRANSACTION;
+SAVEPOINT savepoint1;
+UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
+SAVEPOINT savepoint2;
+UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
+-- If an error occurs, roll back to a specific savepoint
+ROLLBACK TO SAVEPOINT savepoint1;
+-- Finally, commit the transaction
+COMMIT;
+
+To enable or disable the auto-commit option in a transaction, you can use the SET AUTOCOMMIT command. To enable auto-commit, set the command to '1' or 'ON,'and to disable it, set the command to '0' or 'OFF.'
+You can control the behaviour of a transaction by setting session variable called AUTOCOMMIT. If AUTOCOMMIT is set to 1 (the default), 
+then each SQL statement (within a transaction or not) is considered a complete transaction and committed by default when it finishes.
+When AUTOCOMMIT is set to 0, by issuing the SET AUTOCOMMIT = 0 command, the subsequent series of statements acts like a transaction and no activities are committed until an explicit COMMIT statement is issued.
+
+Implict annd Explicit transactions/commmits
+By default, the database engine treats each SQL statement as an atomic unit that runs as its own transaction. For example, if you execute an UPDATE statement and there are no errors, the changes are committed to the database and made permanent. If an error occurs, the statement is rolled back, and no data is changed.
+You can override this behavior by running a SET statement that disables the autocommit setting, but if you do, you must then manually commit or roll back your statements each time you run any statements.
+You might prefer the added control this approach offers (for example on a production instance where you are doing ad-hoc work), but that will depend on your specific requirements.
+
+Always end transactions. Conclude every transaction with either `COMMIT` or `ROLLBACK` to release locks and avoid potential issues.
+Beware of long transactions. Keep transactions as short as possible to reduce lock contention and improve performance.
