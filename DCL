@@ -9,7 +9,11 @@ Syntax:
 revoke privilege_name on object_name
 from {user_name | public | role_name}
 if the user has received SELECT privileges on that table from more than one users,
-he/she can SELECT from that table until everyone who granted the permission revokes it. You cannot REVOKE privileges if they were not initially granted by you
+he/she can SELECT from that table until everyone who granted the permission revokes it(if a and b having select access withgrant option and user c gets select acccess from both a and b
+if user a has been removed with select acccess , but still user b haas select access , so user c will still have select access). You cannot REVOKE privileges if they were not initially granted by you
+
+if user a with grant option with select access grants select access of user b , if user a losses grant option user b can still access select as user a lost only grant opption not select 
+if user a with grant option with select access grants select access of user b , if user a losses select access user b will also loose select option as user a select access has been revoked
 
 Privileges: Privileges defines the access rights provided to a user on a database object. There are two types of privileges.
 1) System privileges - This allows the user to CREATE, ALTER, or DROP database objects.
