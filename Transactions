@@ -40,3 +40,121 @@ You might prefer the added control this approach offers (for example on a produc
 
 Always end transactions. Conclude every transaction with either `COMMIT` or `ROLLBACK` to release locks and avoid potential issues.
 Beware of long transactions. Keep transactions as short as possible to reduce lock contention and improve performance.
+
+
+DELIMITER //
+
+CREATE PROCEDURE transfer(
+    IN sender_id INT,
+    IN receiver_id INT,
+    IN amount DECIMAL(10,2)
+)
+BEGIN
+    DECLARE rollback_message VARCHAR(255) DEFAULT 'Transaction rolled back: Insufficient funds';
+    DECLARE commit_message VARCHAR(255) DEFAULT 'Transaction committed successfully';
+
+    -- Start the transaction
+    START TRANSACTION;
+
+    -- Attempt to debit money from account 1
+    UPDATE accounts SET balance = balance - amount WHERE account_id = sender_id;
+
+    -- Attempt to credit money to account 2
+    UPDATE accounts SET balance = balance + amount WHERE account_id = receiver_id;
+
+    -- Check if there are sufficient funds in account 1
+    -- Simulate a condition where there are insufficient funds
+    IF (SELECT balance FROM accounts WHERE account_id = sender_id) < 0 THEN
+        -- Roll back the transaction if there are insufficient funds
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = rollback_message;
+    ELSE
+        -- Log the transactions if there are sufficient funds
+        INSERT INTO transactions (account_id, amount, transaction_type) VALUES (sender_id, -amount, 'WITHDRAWAL');
+        INSERT INTO transactions (account_id, amount, transaction_type) VALUES (receiver_id, amount, 'DEPOSIT');
+        
+        -- Commit the transaction
+        COMMIT;
+        SELECT commit_message AS 'Result';
+    END IF;
+END //
+
+DELIMITER ;
+
+CALL transfer(1,2,1000);
+
+Some statements cannot be rolled back. In general, these include data definition language (DDL) statements, such as those that create or drop databases, those that create, drop, or alter tables or stored routines.
+You should design your transactions not to include such statements. If you issue a statement early in a transaction that cannot be rolled back, and then another statement later fails, the full effect of the transaction cannot be rolled back in such cases by issuing a ROLLBACK statement.
+
+
+How to Use the InnoDB Storage Engine for Transactions
+InnoDB is a storage engine for MySQL that has many functions that can improve your database performance. 
+Some of these features include the ability to group and execute multiple SQL statements together, encrypt our data, create and drop indexes without affecting the database performance, handle CPU as well as large data, and many more.
+
+To use InnoDB for transactions in MySQL, you will need to make sure that your tables are using the InnoDB storage engine. You can check this by running the following query:
+SHOW TABLE STATUS FROM your_database_name;
+This will show you the storage engine used by each table in your database. It is also possible for you to set the default storage engine to InnoDB by modifying the my.cnf configuration file, or by running the following command:
+SET storage_engine=InnoDB;
+
+
+Locking and Concurrency in MySQL Transactions
+Locking is a technique that is used to prevent race conditions. A race condition is a process where multiple transactions are trying to access the same data at the same time.
+MySQL uses different types of locks to control access to data in a transaction. These include:
+
+Shared locks: This allows multiple transactions to read the same data at the same time but restricts any of them from writing or making changes to it.
+Exclusive locks: This prevents different transactions from reading or writing the same data at the same time.
+Intent locks: This is used to specify that a transaction is planning to read or write a certain section of data.
+Row-level locks: This allows transactions to lock only the specific rows they need to access, rather than the entire table.
+Concurrency is a method where multiple transactions can run simultaneously without interfering with each other's data.
+
+MySQL uses a multi-version concurrency control (MVCC) mechanism. This allows multiple transactions to read and write to the same data at the same time without conflict.
+
+I'm sure you are wondering how this can be achieved. Well, each transaction sort of captures the data it is about to modify at the start of the transaction 
+and writes its changes to an entirely different version of the data. This allows other transactions to continue working with the original version of the data without a conflict of interest.
+To achieve high concurrency, it's important to keep the transactions as short as possible and avoid long-running transactions that hold locks for extended periods.
+
+🔹 1. READ UNCOMMITTED
+Lowest isolation level
+Transactions can see uncommitted changes (dirty reads).
+High concurrency, but low data integrity.
+Problems possible:
+✅ Dirty Read
+✅ Non-repeatable Read
+✅ Phantom Read
+Example:
+If one transaction updates a row but hasn’t committed yet, another transaction can read that uncommitted value.
+
+🔹 2. READ COMMITTED
+A transaction can only read committed data.
+Prevents dirty reads.
+Each SELECT in a transaction may see different data if others commit between queries.
+Problems possible:
+❌ Dirty Read → ❌ (not possible)
+✅ Non-repeatable Read
+✅ Phantom Read
+Default in: Oracle, SQL Server, PostgreSQL.
+
+🔹 3. REPEATABLE READ
+Ensures the same rows read once cannot change within the same transaction.
+Prevents dirty and non-repeatable reads.
+But new rows matching a condition can appear (phantoms).
+Problems possible:
+❌ Dirty Read → ❌
+❌ Non-repeatable Read → ❌
+✅ Phantom Read
+Default in: MySQL (InnoDB engine).
+
+🔹 4. SERIALIZABLE
+Highest isolation level.
+Transactions are executed as if they were run one after another.
+Prevents dirty, non-repeatable, and phantom reads.
+Lowest concurrency (uses locking or versioning).
+Problems possible:
+❌ Dirty Read → ❌
+❌ Non-repeatable Read → ❌
+❌ Phantom Read → ❌
+
+Higher isolation = More consistency but less concurrency.
+Trade-off: Full consistency but slower performance due to more locking.
+
