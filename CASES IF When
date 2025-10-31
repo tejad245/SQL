@@ -1,0 +1,52 @@
+
+    CASE expression
+        WHEN value1 THEN result1
+        WHEN value2 THEN result2
+        ...
+        ELSE default_result
+    END;
+
+  CASE
+        WHEN condition1 THEN result1
+        WHEN condition2 THEN result2
+        ...
+        ELSE default_result
+    END;
+
+select productname,
+        cost
+        CASE
+          WHEN cost>10000 THEN 'highly expensive'
+          WHEN cost BETWEEN 40000 AND 100000 THEN 'mid range'
+          ELSE 'affordable'
+        END AS price_category
+from products
+
+SELECT IF(quantity > 0, 'In Stock', 'Out of Stock') AS StockStatus FROM Products;
+
+CASE Statement With ORDER BY Clause
+
+select productname , shippingdate, cost
+from products
+order by ( case
+            when cost not null then cost
+            else shippingdate)
+
+AQL IF:SQL IF statement when you need to make decisions in your SQL queries based on specific conditions. 
+IF (CONDITION, satatement_if_true , statement_if_false)
+condition: A Boolean expression that evaluates to either true or false.
+statement_if_true: SQL statement(s) to execute if the condition is true. This can include SELECT, INSERT, UPDATE, DELETE, and other SQL statements.
+statement_if_false: SQL statement(s) to execute if the condition is false. It can also include any valid SQL statements.
+
+SELECT product_id, price, 
+  IF(price > 100, 'Expensive', 'Affordable') AS category
+FROM products;
+
+SELECT CASE WHEN year = 'FR' THEN 'FR'
+            WHEN year = 'SO' THEN 'SO'
+            WHEN year = 'JR' THEN 'JR'
+            WHEN year = 'SR' THEN 'SR'
+            ELSE 'No Year Data' END AS year_group,
+            COUNT(1) AS count
+  FROM benn.college_football_players
+ GROUP BY year_group
