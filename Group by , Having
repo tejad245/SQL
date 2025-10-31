@@ -1,0 +1,45 @@
+Group by :
+group by is used to group rows in the result by one or more column , it is used in conjunction with aggregate functions like sum(),avg(),max etc, to preform calculations on group of rows
+group by is applied before the select clause 
+The GROUP BY clause groups rows that have the same values in one or more specified columns into a set of summary rows.
+This allows you to perform aggregate functions (like COUNT(), SUM(), AVG(), MIN(), MAX()) on each group.
+
+Having by :
+used to filter the results of group by operation , it is applied after the group by and select clause
+specified condition. Unlike the WHERE clause, which filters individual rows before grouping, the HAVING clause filters groups after the grouping and aggregation have occurred.
+This is particularly useful for filtering based on the results of aggregate functions.
+
+WHERE filters individual rows before GROUP BY forms groups. HAVING filters the groups after GROUP BY has aggregated the data.
+
+syntax:
+select column_name(s)
+from table_name
+where = condition(s)
+group by column_name(s)
+having condition(s)
+order by 
+limit
+
+SELECT MIN(Experience) AS Min_Experience
+FROM Employee
+HAVING MIN(Experience) < 3;
+
+select count(*) as dept_idbycount, dept_id from employee 
+group by dept_id
+having dept_idbycount>=2
+
+With where condition -> groups results by dept_id which have dept_id count >=2 , where age=27 , no of employee in dept with age =27
+select count(*) as dept_idbycount, dept_id from employee 
+where age=27
+group by dept_id
+having dept_idbycount>=2
+
+SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+FROM Orders
+INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+WHERE LastName = 'Davolio' OR LastName = 'Fuller'
+GROUP BY LastName
+HAVING COUNT(Orders.OrderID) > 25;
+
+
+
