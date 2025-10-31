@@ -1,0 +1,39 @@
+In MySQL, you can use the SIGNAL and RESIGNAL statements to raise and handle exceptions within a transaction.
+refer this : https://www.freecodecamp.org/news/how-to-use-mysql-transactions/
+
+START TRANSACTION;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        START TRANSACTION
+            ROLLBACK;
+            RESIGNAL;
+        END;
+    UPDATE accounts SET balance = 5000 WHERE user_id = 1;
+    UPDATE accounts SET balance = 1000 WHERE user_id = 2;
+    IF (SELECT balance FROM accounts WHERE user_id = 1) < 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient balance';
+    END IF;
+COMMIT;
+The DECLARE EXIT HANDLER FOR SQLEXCEPTION block is used to catch any SQL exceptions that occur within the transaction.
+If an exception is caught, the transaction is rolled back using the ROLLBACK statement. Then the RESIGNAL statement raises the exception again so that it can be handled by an outer try-catch block, if any.
+The IF statement checks if the balance of user_id =1 is less than zero. If true, the SIGNAL statement raises an exception with a specific SQLSTATE '45000' and a message "Insufficient balance".
+
+It's good practice to use the SAVEPOINT statement within a transaction to set savepoints. This makes it possible for you to rollback to a specific point in the transaction, rather than rolling back the entire transaction.
+Here is an example of how you might use the SAVEPOINT statement within the previous example:
+
+START TRANSACTION;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        START TRANSACTION
+            ROLLBACK TO SAVEPOINT my_savepoint;
+            RESIGNAL;
+        END;
+    UPDATE accounts SET balance = 5000 WHERE user_id = 1;
+    UPDATE accounts SET balance = 1000 WHERE user_id = 2;
+    IF (SELECT balance FROM accounts WHERE user_id = 1) < 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient balance';
+    END IF;
+COMMIT
+
+
+
+
+COMMIT;
