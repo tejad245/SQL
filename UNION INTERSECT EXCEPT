@@ -1,0 +1,30 @@
+UNION:The UNION operator is used to vertically combine the results of two SELECT statements. For UNION to work without errors,
+all SELECT statements must have the same number of columns and corresponding columns must have the same data type. UNION does not return duplicates.
+SELECT ARTIST_ID
+FROM ARTIST
+UNION
+SELECT ARTIST_ID
+FROM ALBUM;
+
+UNION ALL :The UNION ALL operator works just like UNION, but it returns duplicate values. The same restrictions of UNION hold true for UNION ALL
+SELECT ARTIST_ID
+FROM ARTIST
+UNION ALL
+SELECT ARTIST_ID
+FROM ALBUM;
+
+INTERSECT : The INTERSECT operator returns only identical rows from two tables.
+SELECT ARTIST_ID
+FROM ARTIST
+INTERSECT
+SELECT ARTIST_ID
+FROM ALBUM;
+
+EXCEPT : The EXCEPT operator returns only those rows from the left table that are not present in the right table.
+SELECT ARTIST_ID
+FROM ARTIST
+EXCEPT
+SELECT ARTIST_ID
+FROM ALBUM;
+
+P
