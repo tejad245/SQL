@@ -1,0 +1,22 @@
+Here are the different types of the JOINs in SQL:
+(INNER) JOIN: Returns records that have matching values in both tables
+LEFT (OUTER) JOIN: Returns all records from the left table, and the matched records from the right table , If there is no match, NULL values are returned for columns from the right table
+RIGHT (OUTER) JOIN: Returns all records from the right table, and the matched records from the left table , for the rows for which there is no matching row on the left side, the result-set will contain null
+FULL (OUTER) JOIN: creates the result-set by combining results of both LEFT JOIN and RIGHT JOIN.The result-set will contain all the rows from both tables. For the rows for which there is no matching, the result-set will contain NULL values.
+Returns all records when there is a match in either left or right table. 
+CROSS JOIN : it returns noof rows=carteesian product of table a * and table b
+NATURAL JOIN : It checks the common column present in both tables and matches them based on inner join and returns result.
+if table A has country column and table B has country column, it matches those columns on inner join and returns, no need to specify the column name it identifies common column and returns result based on column name
+if common column exists , if common column does not exits it returns the cartesian results A*B.
+
+ex: of inner join,if exampl both table A and B have country column , it matches based on that column and returns.
+select *
+from Table A
+natural join table B
+
+SELECT table1.column1,table1.column2,table2.column1,.... FROM table1  INNER JOIN
+ table2 ON  table1.matching_column = table2.matching_column;
+
+->If both tables have null value on any row on which join is performed , null value match is performed in any kinda join its ignored.
+
+
