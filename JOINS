@@ -20,9 +20,33 @@ SELECT NAME, TITLE
 FROM ARTIST
 CROSS JOIN ALBUM;
 
+Full Join with Filter Clause: to exclude those matching , and get only non matching
+SELECT table1.column1, table1.column2
+FROM table1
+FULL JOIN table2 ON table1.key = table2.key
+WHERE table1.key IS NULL OR
+table2.key IS NULL;
+
 SELECT table1.column1,table1.column2,table2.column1,.... FROM table1  INNER JOIN
  table2 ON  table1.matching_column = table2.matching_column;
 
 ->If both tables have null value on any row on which join is performed , null value match is performed in any kinda join its ignored.
+
+Self Join
+A self join is a regular join but is used when a table has a foreign key relationship with itself so that the table is joined with itself instead of another table.
+It is typically useful when you need to compare rows within the same table. Below is the syntax for a self join:
+SELECT column_name(s)
+FROM table1 T1, table1 T2
+WHERE condition;
+
+Can I join more than two tables in SQL?
+Yes, you can join more than two tables in SQL. To join multiple tables, you can simply include additional JOIN clauses in your SQL statement, 
+with each JOIN clause joining one table to the result of the previous join. For instance:
+SELECT * FROM orders
+JOIN customers
+ON orders.customer_id = customers.customer_id
+JOIN products
+ON orders.product_id = products.product_id;
+
 
 
