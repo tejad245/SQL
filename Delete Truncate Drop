@@ -1,2 +1,11 @@
-DELETE removes rows one by one and can be rolled back. You can also apply a condition. 
-TRUNCATE removes all rows quickly and can’t be rolled back in most systems. It resets identity counters too.
+DELETE removes rows one by one and can be rolled back. You can also apply a condition. it is DML command
+
+TRUNCATE removes all rows quickly and can’t be rolled back in most systems. It resets identity counters too(It resets auto-increment values back to their starting value usually 1).
+truncate is DDL command  
+ex: TRUNCATE TABLE employee
+why truncate is ddl . The database doesn’t delete rows one by one.
+Instead, it deallocates all data pages used by the table.
+That means:
+It changes the metadata of the table (like resetting storage allocation).
+It resets identity counters (in many databases).
+It updates table definition info in system catalogs.
