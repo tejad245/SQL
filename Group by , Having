@@ -41,5 +41,35 @@ WHERE LastName = 'Davolio' OR LastName = 'Fuller'
 GROUP BY LastName
 HAVING COUNT(Orders.OrderID) > 25;
 
+for shorthand, you can use numbers instead of typing out the full column names, to make your query more concise. Here's the exact same query in the GROUP BY 1,2 format:
+SELECT 
+	ticker, 
+    EXTRACT(YEAR FROM date) AS year, 
+    ROUND(AVG(open),2) AS avg_open 
+FROM stock_prices 
+GROUP BY 1, 2
+ORDER BY year DESC;
+
+Having with multiple conditions
+HAVING can be used to filter aggregated data using multiple conditions, just in the same way WHERE can filter data with multiple conditions.
+Here's an example that finds all FAANG stocks where the average open price is greater than $200 per share, and the minimum price the stock opened at is greater than 100 per share:
+SELECT ticker, AVG(open), MIN(open)
+FROM stock_prices
+GROUP BY ticker
+HAVING AVG(open) > 200 AND MIN(open) > 100;
+
+Can HAVING be used without GROUP BY?
+It's technically possible to have HAVING without GROUP BY in SQL, and in this case HAVING operates the same as WHERE.
+However, practically speaking, it's super weird to use HAVING in this context. For the most part, you should just use a WHERE clause if trying to filter on non-aggregated values.
+
+DISTINCT With Two Columns
+If you include two (or more) columns in a SELECT DISTINCT clause, your results will contain all of the unique pairs of those two columns.
+For example, imagine you worked at stock trading app Robinhood and had access to their trades dataset. Here's a SQL query that uses DISTINCT on two columns – user_id's and trade statuses:
+SELECT DISTINCT user_id, status
+FROM trades
+ORDER BY user_id;
 
 
+You can use DISTINCT with aggregate functions – the most common one being COUNT. Here's an example that finds the number of unique user's who made trades:
+SELECT COUNT(DISTINCT user_id) 
+FROM trades;
