@@ -1,0 +1,94 @@
+Execution Order: The inner query executes first, and its results are then passed to the outer query for further processing.
+Placement: Subqueries can be placed in various clauses of the outer query, including:
+WHERE clause: To filter data based on a condition derived from the subquery's result.
+FROM clause: To treat the subquery's result set as a temporary table (derived table or inline view) for the outer query.
+SELECT clause: To return a single value calculated by the subquery for each row of the outer query.
+
+Types:
+Independent Nested Queries: The inner query can be executed independently of the outer query.
+The inner query executes completely on its own, once, and its results are then passed to the outer query. Operators like IN, NOT IN, ANY, and ALL are commonly used with this type.
+An outer query won't be executed until its inner query completes its execution. The outer query uses the result of the inner query. 
+Correlated Nested Queries: The inner query depends on the outer query for its execution and is re-evaluated for each row processed by the outer query.
+These queries reference columns from the outer query, and the EXISTS and NOT EXISTS operators are frequently used with them. 
+
+Selecct student_id from students_course where course_id in (select ccourse_id from courses where course_name in ("DBMS","SQL"))
+
+1. In the WHERE clause (for filtering):
+SELECT employee_name 
+FROM employees 
+WHERE department_id = (SELECT department_id 
+                       FROM departments 
+                       WHERE department_name = 'Sales');
+SELECT first_name, last_name, total_visits
+FROM guests
+WHERE total_visits > (SELECT AVG(total_visits) FROM guests);
+
+2. In the FROM clause (as a derived table)
+A subquery in the FROM clause creates a temporary, virtual table (known as a "derived table") that the outer query can then treat like any other table. It must be given an alias. 
+Example: Select names and phone numbers of students whose location starts with 'C' (using a derived table).
+sql
+SELECT name, phone_number
+FROM (SELECT name, phone_number, location 
+      FROM student 
+      WHERE location LIKE 'C%') AS sub;
+
+3. With INSERT, DELETE , UPDATE
+DELETE FROM employees
+WHERE salary < (SELECT MAX(salary) FROM employees WHERE department = 'IT');
+
+Delete from employee where age > (select avg(age) from employee) --> getting error
+The error you are receiving is a common restriction in many SQL database systems (MySQL, SQL Server, Oracle, etc.). The database prevents a single SQL statement from modifying a table (DELETE operation) while simultaneously reading from the same table in a subquery in the WHERE clause. 
+The database engine needs a consistent state of the data to calculate the AVG(age), but the DELETE operation changes the data, creating a conflict.
+The Workaround: Use a Temporary Solution
+The most common and compatible solution across different database systems is to store the average value in a separate variable or a temporary table/CTE first, and then use that stored value in your DELETE statement
+
+
+Execution Order in Co-related Nested Queries
+In correlated nested queries, the inner query uses values from the outer query, and the execution order is different from that of independent nested queries.
+First, the outer query selects the first row.
+Inner query uses the value of the selected row. It executes its query and returns a result set.
+Outer query uses the result set returned by the inner query. It determines whether the selected row should be included in the final output.
+Steps 2 and 3 are repeated for each row in the outer query's result set.
+This process can be resource-intensive. It may lead to performance issues if the query is not optimized properly.
+
+In co-related nested queries, the following operators can be used
+EXISTS Operator
+The EXISTS Operator checks whether a subquery returns any row. If it returns at least one row. EXISTS operator returns true, and the outer query continues to execute. If the subquery returns no row, the EXISTS operator returns false, and the outer query stops execution.
+
+NOT EXISTS Operator
+The NOT EXISTS Operator checks whether a subquery returns no rows. If the subquery returns no row, the NOT EXISTS operator returns true, and the outer query continues to execute. If the subquery returns at least one row, the NOT EXISTS operator returns false, and the outer query stops execution.
+
+ANY Operator
+The ANY Operator compares a value of the outer query's result with one or more values returned by the inner query. If the comparison is true for any one of the values returned by the inner query, the row is included in the final result.
+
+ALL Operator
+The ALL Operator compares a value of the outer query's result with all the values returned by the inner query. Only if the comparison is true for all the values returned by the inner query, the row is included in the final result.
+These operators are used to create co-related nested queries that depend on values from the outer query for execution.
+
+Characteristics of Correlated Subqueries
+Dependency: The inner query references columns from the outer query, establishing a direct dependency.
+Row-by-row Execution: The inner query runs multiple times—once for each row processed by the outer query.
+Performance Considerations: Because the inner query runs repeatedly, correlated subqueries can be slower than their non-correlated counterparts, especially on large datasets.
+
+Corelated subqueries
+Find Employees with Salaries Above Their Department’s Average
+SELECT first_name, salary
+FROM employees e1
+WHERE salary > (SELECT AVG(salary) FROM employees e2 WHERE e1.department_id = e2.department_id)
+
+Not Considering NULL Values
+Nested queries can produce unexpected results when NULL values are present in the data.
+SELECT first_name
+FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees WHERE department_id IS NOT NULL);
+
+Combining subqueries with window functions
+Subqueries can be used to refine the dataset that window functions act on, making them useful for ranking, cumulative totals, and moving averages.
+Suppose you want to rank products by sales within each region. You can use a subquery to select the relevant data and then apply a window function for ranking.
+ -- Ranks products by sales within each region
+SELECT region, product_id, sales, 
+       RANK() OVER (PARTITION BY region ORDER BY sales DESC) AS sales_rank 
+-- Subquery: calculates total sales per product in each region
+FROM (SELECT region, product_id, SUM(sales) AS sales  
+      FROM sales_data
+      GROUP BY region, product_id) AS regional_sales;
