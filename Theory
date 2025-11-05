@@ -22,3 +22,10 @@ Atomicity is managed using ROLLBACK in case of errors, preventing partial update
 Consistency is enforced via constraints (e.g., foreign keys, unique keys) to maintain data integrity.
 Isolation is implemented through locks to avoid conflicts between concurrent transactions.
 Durability is achieved by persisting transactions, ensuring that they are not lost once committed, even in the event of a failure.
+
+Explain the different normal forms (1NF, 2NF, 3NF).
+1NF (First Normal Form): Each column must contain atomic (single) values, and there should be no repeating groups of data.
+2NF (Second Normal Form): Must be in 1NF and all non-key attributes must be fully dependent on the primary key.
+3NF (Third Normal Form): Must be in 2NF and have no transitive dependencies (non-key attributes should not depend on other non-key attributes).
+What is denormalization and when would you use it? 
+Denormalization is intentionally introducing redundancy to a database to improve the performance of complex queries, typically in data warehousing or analytical processing (OLAP) systems. 
