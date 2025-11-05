@@ -1,0 +1,2 @@
+DELETE removes rows one by one and can be rolled back. You can also apply a condition. 
+TRUNCATE removes all rows quickly and can’t be rolled back in most systems. It resets identity counters too.
