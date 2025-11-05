@@ -29,3 +29,11 @@ Explain the different normal forms (1NF, 2NF, 3NF).
 3NF (Third Normal Form): Must be in 2NF and have no transitive dependencies (non-key attributes should not depend on other non-key attributes).
 What is denormalization and when would you use it? 
 Denormalization is intentionally introducing redundancy to a database to improve the performance of complex queries, typically in data warehousing or analytical processing (OLAP) systems. 
+
+How does RDBMS handle deadlocks and how can they be avoided?
+Deadlocks happen when two transactions wait for each other’s locks. RDBMS systems detect them and kill one to let the other finish.
+You can avoid them by accessing tables in a fixed order, keeping transactions short, and using proper indexing.
+
+What’s the difference between horizontal and vertical partitioning in databases?
+Horizontal partitioning splits a table into rows—like separating data by region. It’s good for large datasets. 
+Vertical partitioning splits it into columns—useful for reducing data loaded at once. Both help with performance and maintenance.
