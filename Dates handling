@@ -1,0 +1,4 @@
+Employees Hired in the Last 30 Days
+SELECT *
+FROM employees
+WHERE hire_date >= CURRENT_DATE - INTERVAL '30' DAY;
