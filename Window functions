@@ -76,6 +76,17 @@ SELECT
 FROM
   sales;
 
+How do you find the nth highest value in a column of a table?
+Using window functions to handle ties correctly:
+SELECT column_name
+FROM (
+  SELECT column_name, DENSE_RANK() OVER (ORDER BY column_name DESC) AS rnk
+  FROM table_name
+) t
+WHERE rnk = :n;
+
+
+
 
 
 
