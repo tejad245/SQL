@@ -37,3 +37,27 @@ You can avoid them by accessing tables in a fixed order, keeping transactions sh
 What’s the difference between horizontal and vertical partitioning in databases?
 Horizontal partitioning splits a table into rows—like separating data by region. It’s good for large datasets. 
 Vertical partitioning splits it into columns—useful for reducing data loaded at once. Both help with performance and maintenance.
+
+
+What is the difference between CHAR and VARCHAR2 datatype in SQL?
+Both Char and Varchar2 are used for characters datatype but varchar2 is used for character strings of variable length whereas Char is used for strings of fixed length.
+For example, char(10) can only store 10 characters and will not be able to store a string of any other length whereas varchar2(10) can store any length i.e 6,8,2 in this variable.
+char -Always uses exactly n bytes (padded with spaces if shorter), e: used for pincodes
+ex:-
+CREATE TABLE Test (
+  c CHAR(5),
+  v VARCHAR(5)
+);
+INSERT INTO Test VALUES ('SQL', 'SQL');
+SELECT LENGTH(c), LENGTH(v) FROM Test;
+Output:
+LENGTH(c) = 5
+LENGTH(v) = 3
+
+ What do you mean by Denormalization?
+Denormalization refers to a technique that is used to access data from higher to lower forms of a database. It helps the database managers to increase the performance of the entire infrastructure as it introduces redundancy into a table.
+It adds the redundant data into a table by incorporating database queries that combine data from various tables into a single table.
+
+Clustered Index: This index reorders the physical order of the table and searches based on the basis of key values. Each table can only have one clustered index.
+Non-Clustered Index: Non-Clustered Index does not alter the physical order of the table and maintains a logical order of the data. Each table can have many nonclustered indexes.
+
