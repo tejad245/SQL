@@ -58,6 +58,17 @@ LENGTH(v) = 3
 Denormalization refers to a technique that is used to access data from higher to lower forms of a database. It helps the database managers to increase the performance of the entire infrastructure as it introduces redundancy into a table.
 It adds the redundant data into a table by incorporating database queries that combine data from various tables into a single table.
 
+DEFAULT: Assigns a default value if none is provided.
+CHECK: Ensures values meet a condition.
+CREATE TABLE employees (
+  id INT PRIMARY KEY,
+  salary DECIMAL DEFAULT 30000,
+age INT CHECK (age >= 18)
+);
+
 Clustered Index: This index reorders the physical order of the table and searches based on the basis of key values. Each table can only have one clustered index.
 Non-Clustered Index: Non-Clustered Index does not alter the physical order of the table and maintains a logical order of the data. Each table can have many nonclustered indexes.
 
+Describe the process of database mirroring
+Database mirroring is a high-availability solution in SQL Server that involves creating and maintaining redundant database copies on separate servers.
+It ensures data availability and disaster recovery by automatically failing over to the mirror server in case of a primary server failure.
