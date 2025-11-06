@@ -1,0 +1,3 @@
+ What are the differences between OLTP and OLAP?
+ANSWER – OLTP (Online Transaction Processing) handles day-to-day transactions, uses normalized databases, and focuses on quick updates of small amounts of data.
+OLAP (Online Analytical Processing) is used for complex analysis, uses denormalized databases, and handles large volumes of historical data for reporting and analysis.
