@@ -1,0 +1,15 @@
+The query to delete duplicates is shown below using Common Table Expression (CTE) and ROW_NUMBER().
+The query deletes all the duplicates while retaining the first row of data.
+with ranked as (
+  Select * , row_number over (partition by age order by id) as rn
+  from users)
+Delete from user
+where id in (
+select id from ranked 
+where rn>1
+);
+
+
+What is the difference between COUNT(*) and COUNT(column_name)?
+The difference is that COUNT(*) counts all the rows of data, including NULL values, while COUNT(column_name) counts only non-NULL values in the specified column. Let's illustrate this using a table named Users.
+
